@@ -1,6 +1,9 @@
 ## Introduction
 
 
+| **Update 2026-02-11** | This repo is no longer maintained. For updated Linux, macOS, and Windows support, see [PlusGenie/openclaw-on-tradingboat](https://github.com/PlusGenie/openclaw-on-tradingboat). |
+| --- | --- |
+
 This repository is a customized version of [Interactive Brokers Gateway Docker](https://github.com/UnusualAlpha/ib-gateway-docker) , forked to meet specific requirements for educational materials.
 
 ## About Interactive Brokers Gateway Docker
