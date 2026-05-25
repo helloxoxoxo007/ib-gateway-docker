@@ -34,19 +34,25 @@ echo "=== Launching IBC (with no login dialog wait) ==="
     "--user=${TWS_USERID}" \
     "--pw=${TWS_PASSWORD}" \
     "--mode=${TRADING_MODE}" \
-    "--on2fatimeout=exit" 
+    "--on2fatimeout=exit"  
 
-echo "=== Waiting for API port to open ==="
-for i in {1..60}; do
-    if ss -tlnp 2>/dev/null | grep -q ':4001'; then
-        echo "SUCCESS: Port 4001 is listening!"
-        break
-    fi
-    sleep 3
-done
+echo "Waiting 60 seconds for API port to bind..."
+sleep 60
 
-echo "Final listening ports:"
-ss -tlnp | grep -E '400|590'
+echo "=== Final port status ==="
+ss -tlnp | grep -E '400|590' || echo "No IB ports found"
+
+#echo "=== Waiting for API port to open ==="
+#for i in {1..60}; do
+#    if ss -tlnp 2>/dev/null | grep -q ':4001'; then
+#        echo "SUCCESS: Port 4001 is listening!"
+#        break
+#    fi
+#    sleep 3
+#done
+#
+#echo "Final listening ports:"
+#ss -tlnp | grep -E '400|590'
 echo "=== Startup completed ==="
 
 tail -f /dev/null
