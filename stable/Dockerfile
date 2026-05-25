@@ -10,7 +10,7 @@ FROM ubuntu:22.04 as setup
 
 ENV IB_GATEWAY_VERSION=1.45.1f
 ENV IB_GATEWAY_RELEASE_CHANNEL=stable
-ENV IBC_VERSION=3.15.2
+ENV IBC_VERSION=3.23.0
 
 # Prepare system
 RUN apt-get update -y
@@ -38,7 +38,14 @@ RUN sha256sum --check ./ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh.
 #  --output ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh.sha256
 #RUN sha256sum --check ./ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh.sha256
 RUN chmod a+x ./ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh
-RUN ./ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh -q -dir /root/Jts/ibgateway/${IB_GATEWAY_VERSION}
+#RUN ./ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh -q -dir /root/Jts/ibgateway/${IB_GATEWAY_VERSION}
+RUN mkdir -p /root/Jts/ibgateway/${IB_GATEWAY_VERSION} && \
+    chmod 777 /root/Jts/ibgateway/${IB_GATEWAY_VERSION} && \
+    ./ibgateway-${IB_GATEWAY_VERSION}-standalone-linux-x64.sh \
+      -q \
+      -dir /root/Jts/ibgateway/${IB_GATEWAY_VERSION} \
+      -Djava.io.tmpdir=/tmp || \
+    (echo "Installation failed - Disk usage:" && df -h && exit 1)
 COPY ./config/ibgateway/jts.ini /root/Jts/jts.ini
 
 # Install IBC
@@ -73,10 +80,31 @@ RUN apt-get install --no-install-recommends --yes \
   libxi6 \
   libgtk2.0-bin \
   socat \
+  net-tools \
+  iproute2 \
+  curl \
   x11vnc
 
 # Copy files
 COPY --from=setup /root/ .
+# ==================== FORCE JVM FLAGS FOR JAVA 17+ ====================
+# This must run AFTER copying files from setup stage
+RUN rm -f /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "--add-opens=java.desktop/javax.swing=ALL-UNNAMED" > /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "--add-opens=java.base/java.util=ALL-UNNAMED" >> /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "--add-opens=java.desktop/java.awt=ALL-UNNAMED" >> /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "--add-opens=java.desktop/javax.swing.plaf=ALL-UNNAMED" >> /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "-Xmx1024m" >> /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "-Xms512m" >> /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions && \
+    echo "=== Final vmoptions content ===" && \
+    cat /root/Jts/ibgateway/1.45.1f/ibgateway.vmoptions
+
+# Also create backup in case launcher ignores vmoptions
+RUN echo "--add-opens=java.desktop/javax.swing=ALL-UNNAMED \
+--add-opens=java.base/java.util=ALL-UNNAMED \
+--add-opens=java.desktop/java.awt=ALL-UNNAMED \
+--add-opens=java.desktop/javax.swing.plaf=ALL-UNNAMED" > /root/extra_java_opts.txt
+# =====================================================================
 RUN chmod a+x /root/scripts/*.sh
 COPY --from=setup /usr/local/i4j_jres/ /usr/local/i4j_jres
 
