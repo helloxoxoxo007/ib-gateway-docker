@@ -34,6 +34,11 @@ services:
       TBOT_TELEGRAM_CHAT_ID: ${TBOT_TELEGRAM_CHAT_ID:-}
       TBOT_NGROK: ${TBOT_NGROK:-}
       TBOT_PROFILER: ${TBOT_PROFILER:-False}
+      JAVA_OPTIONS: --add-opens=java.desktop/javax.swing=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: --add-opens=java.desktop/javax.swing=ALL-UNNAMED
+      IBC_JAVA_OPTIONS: --add-opens=java.desktop/javax.swing=ALL-UNNAMED
+      EXTRA_JAVA_OPTS: --add-opens=java.desktop/javax.swing=ALL-UNNAMED
+      JAVA_VM_OPTIONS: --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED
     ports:
       - "127.0.0.1:4001:4001"
       - "127.0.0.1:4002:4002"
@@ -51,7 +56,7 @@ services:
       - "0.0.0.0:6379:6379"
 
   ngrok:
-    image: ngrok/ngrok:3.19.1-alpine
+    image: ngrok/ngrok:3.37.3-alpine
     restart: always
     container_name: ngrok-on-tradingboat
     command:

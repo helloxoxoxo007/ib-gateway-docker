@@ -1,0 +1,14 @@
+venv) root@cal-VMware-webhook-m2:/home/cal/project/ib-gateway-docker# docker ps -a
+CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                     PORTS                                                                                                  NAMES
+c73d46631b81   redis:7.0.10-alpine         "docker-entrypoint.s…"   23 seconds ago   Created                                                                                                                           redis-on-tradingboat
+3638a0792457   ngrok/ngrok:3.19.1-alpine   "/nix/store/1qpvcjc0…"   23 seconds ago   Created                                                                                                                           ngrok-on-tradingboat
+65139c809b02   jenkins/jenkins:lts         "/usr/bin/tini -- /u…"   5 months ago     Exited (255) 5 days ago    8080/tcp, 0.0.0.0:50000->50000/tcp, [::]:50000->50000/tcp, 0.0.0.0:443->8443/tcp, [::]:443->8443/tcp   jenkins
+a6883548a7ea   6cf72d977a3e                "/home/tbot/tbot_run…"   6 months ago     Exited (137) 5 hours ago                                                                                                          a6883548a7ea_tbot-on-tradingboat
+(venv) root@cal-VMware-webhook-m2:/home/cal/project/ib-gateway-docker# docker rm a6883548a7ea
+
+
+
+update teh ngnox version
+update channele   update.sh  stable 10.45.1f
+docker-compiose up --buiod
+ https://github.com/UnusualAlpha/ib-gateway-docker/releases/download/
