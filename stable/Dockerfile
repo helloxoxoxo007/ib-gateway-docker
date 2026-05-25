@@ -93,7 +93,9 @@ RUN apt-get install --no-install-recommends --yes \
   git \
   python3 \
   python3-pip \
+  python3-dev \
   python-is-python3 \
+  gcc \
   tmux
 
 # Create tbot user and clone both repos
