@@ -71,6 +71,9 @@ ARG TBOT_TRADINGBOAT_GIT_REPO=https://github.com/helloxoxoxo007/tbot-tradingboat
 
 WORKDIR /root
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/London
+
 # Prepare system
 RUN apt-get update -y
 RUN apt-get install --no-install-recommends --yes \
