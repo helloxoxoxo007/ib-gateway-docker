@@ -1,0 +1,23 @@
+version: "3.4"
+
+services:
+  redis:
+    image: redis:7.0.10-alpine
+    restart: always
+    container_name: redis-on-tradingboat
+    ports:
+      - "0.0.0.0:6379:6379"
+
+  ngrok:
+    image: ngrok/ngrok:3.37.3-alpine
+    restart: always
+    container_name: ngrok-on-tradingboat
+    command:
+      - http
+      - "${NGROK_PORT}"
+    ports:
+      - "4040:4040"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTH}
+      NGROK_REGION: us
+      NGROK_PORT: ${NGROK_PORT:-}

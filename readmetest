@@ -12,3 +12,17 @@ update teh ngnox version
 update channele   update.sh  stable 10.45.1f
 docker-compiose up --buiod
  https://github.com/UnusualAlpha/ib-gateway-docker/releases/download/
+
+
+
+i1544  docker builder prune
+ 1545  docker compose build --no-cache ib-gateway
+ 1546  docker compose up -d --force-recreate
+ 1547  docker logs tbot-on-tradingboat -f --tail 150
+ 1548  docker exec tbot-on-tradingboat ss -tlnp | grep -E '400|590'
+ 1549  docker exec tbot-on-tradingboat ss -tlnp'
+ # curl "http://localhost:5000"
+ 1663  docker compose logs -f ib-gateway | grep -E "5000|loguru|ModuleNot|ERR"
+ 1667  docker compose logs -f ib-gateway
+ 1678  docker   compose build --no-cache ib-gateway ;  docker compose up -d --force-recreate
+ 1679  docker exec tbot-on-tradingboat ss -tlnp
