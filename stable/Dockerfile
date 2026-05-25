@@ -102,6 +102,7 @@ RUN mkdir -p /home/tbot/develop/github && \
 
 # Install Python dependencies for tbot-tradingboat
 RUN pip3 install --no-cache-dir -r /home/tbot/develop/github/tbot-tradingboat/requirements.txt || true
+RUN pip3 install --no-cache-dir "libtmux>=0.21.0"
 
 # Copy tbot helper scripts
 COPY ./tbot /home/tbot/tbot
