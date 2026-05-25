@@ -67,6 +67,8 @@ FROM ubuntu:22.04
 
 ENV IB_GATEWAY_VERSION=1.45.1f
 
+ARG TBOT_TRADINGBOAT_GIT_REPO=https://github.com/helloxoxoxo007/tbot-tradingboat.git
+
 WORKDIR /root
 
 # Prepare system
@@ -83,7 +85,24 @@ RUN apt-get install --no-install-recommends --yes \
   net-tools \
   iproute2 \
   curl \
-  x11vnc
+  x11vnc \
+  git \
+  python3 \
+  python3-pip \
+  tmux
+
+# Create tbot user and clone tbot-tradingboat
+RUN useradd -m -s /bin/bash tbot
+RUN mkdir -p /home/tbot/develop/github && \
+    git clone ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradingboat && \
+    chown -R tbot:tbot /home/tbot/develop/github
+
+# Install Python dependencies for tbot-tradingboat
+RUN pip3 install --no-cache-dir -r /home/tbot/develop/github/tbot-tradingboat/requirements.txt || true
+
+# Copy tbot helper scripts
+COPY ./tbot /home/tbot/tbot
+RUN chmod a+x /home/tbot/tbot/*.sh && chown -R tbot:tbot /home/tbot/tbot
 
 # Copy files
 COPY --from=setup /root/ .

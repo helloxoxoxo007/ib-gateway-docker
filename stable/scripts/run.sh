@@ -49,4 +49,14 @@ echo "Final listening ports:"
 ss -tlnp | grep -E '400|590'
 echo "=== Startup completed ==="
 
+# Start TradingBoat Flask app on port 5000
+FLASK_SCRIPT="/home/tbot/develop/github/tbot-tradingboat/tbottmux/run_docker_flask_tbot.sh"
+if [ -f "$FLASK_SCRIPT" ]; then
+  echo "=== Starting TradingBoat Flask on port ${TVWB_HTTPS_PORT:-5000} ==="
+  chmod a+x "$FLASK_SCRIPT"
+  "$FLASK_SCRIPT" &
+else
+  echo "WARNING: $FLASK_SCRIPT not found — port 5000 will not be available"
+fi
+
 tail -f /dev/null
