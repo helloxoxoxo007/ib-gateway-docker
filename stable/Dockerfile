@@ -68,6 +68,7 @@ FROM ubuntu:22.04
 ENV IB_GATEWAY_VERSION=1.45.1f
 
 ARG TBOT_TRADINGBOAT_GIT_REPO=https://github.com/helloxoxoxo007/tbot-tradingboat.git
+ARG TBOT_TVWB_GIT_REPO=https://github.com/helloxoxoxo007/tradingview-webhooks-bot.git
 
 WORKDIR /root
 
@@ -92,17 +93,17 @@ RUN apt-get install --no-install-recommends --yes \
   git \
   python3 \
   python3-pip \
+  python-is-python3 \
   tmux
 
-# Create tbot user and clone tbot-tradingboat
-RUN useradd -m -s /bin/bash tbot
-RUN mkdir -p /home/tbot/develop/github && \
-    git clone ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradingboat && \
+# Create tbot user and clone both repos
+RUN useradd -m -s /bin/bash tbot && mkdir -p /home/tbot/develop/github
+RUN git clone ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradingboat && \
+    git clone ${TBOT_TVWB_GIT_REPO} /home/tbot/develop/github/tradingview-webhooks-bot && \
     chown -R tbot:tbot /home/tbot/develop/github
 
-# Install Python dependencies for tbot-tradingboat
-RUN pip3 install --no-cache-dir -r /home/tbot/develop/github/tbot-tradingboat/requirements.txt || true
-RUN pip3 install --no-cache-dir "libtmux>=0.21.0"
+# Install Python dependencies (requirements.txt already pins libtmux==0.21.0 and loguru)
+RUN pip3 install --no-cache-dir -r /home/tbot/develop/github/tbot-tradingboat/requirements.txt
 
 # Copy tbot helper scripts
 COPY ./tbot /home/tbot/tbot
