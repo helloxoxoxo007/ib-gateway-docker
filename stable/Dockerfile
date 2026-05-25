@@ -104,6 +104,10 @@ RUN git clone ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradin
     git clone ${TBOT_TVWB_GIT_REPO} /home/tbot/develop/github/tradingview-webhooks-bot && \
     chown -R tbot:tbot /home/tbot/develop/github
 
+# Patch ngrok link to use the browser's hostname instead of hardcoded 127.0.0.1
+RUN sed -i 's|const val = response.data.address;|const val = response.data.address.replace(/\\/\\/[^:/]+/, "//" + window.location.hostname);|' \
+    /home/tbot/develop/github/tradingview-webhooks-bot/src/templates/tbot_dashboard.html
+
 # Install Python dependencies (requirements.txt already pins libtmux==0.21.0 and loguru)
 RUN pip3 install --no-cache-dir -r /home/tbot/develop/github/tbot-tradingboat/requirements.txt
 
