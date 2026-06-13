@@ -67,7 +67,13 @@ FROM ubuntu:22.04
 
 ENV IB_GATEWAY_VERSION=1.45.1f
 
+ARG TBOT_TRADINGBOAT_GIT_REPO=https://github.com/helloxoxoxo007/tbot-tradingboat.git
+ARG TBOT_TVWB_GIT_REPO=https://github.com/helloxoxoxo007/tradingview-webhooks-bot.git
+
 WORKDIR /root
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/London
 
 # Prepare system
 RUN apt-get update -y
@@ -83,7 +89,31 @@ RUN apt-get install --no-install-recommends --yes \
   net-tools \
   iproute2 \
   curl \
-  x11vnc
+  x11vnc \
+  git \
+  python3 \
+  python3-pip \
+  python3-dev \
+  python-is-python3 \
+  gcc \
+  tmux
+
+# Create tbot user and clone both repos
+RUN useradd -m -s /bin/bash tbot && mkdir -p /home/tbot/develop/github
+RUN git clone ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradingboat && \
+    git clone ${TBOT_TVWB_GIT_REPO} /home/tbot/develop/github/tradingview-webhooks-bot && \
+    chown -R tbot:tbot /home/tbot/develop/github
+
+# Patch ngrok link to use the browser's hostname instead of hardcoded 127.0.0.1
+RUN sed -i 's|const val = response.data.address;|const val = response.data.address.replace(/\\/\\/[^:/]+/, "//" + window.location.hostname);|' \
+    /home/tbot/develop/github/tradingview-webhooks-bot/src/templates/tbot_dashboard.html
+
+# Install Python dependencies (requirements.txt already pins libtmux==0.21.0 and loguru)
+RUN pip3 install --no-cache-dir -r /home/tbot/develop/github/tbot-tradingboat/requirements.txt
+
+# Copy tbot helper scripts
+COPY ./tbot /home/tbot/tbot
+RUN chmod a+x /home/tbot/tbot/*.sh && chown -R tbot:tbot /home/tbot/tbot
 
 # Copy files
 COPY --from=setup /root/ .
