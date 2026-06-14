@@ -70,6 +70,11 @@ ENV IB_GATEWAY_VERSION=1.45.1f
 ARG TBOT_TRADINGBOAT_GIT_REPO=https://github.com/helloxoxoxo007/tbot-tradingboat.git
 ARG TBOT_TVWB_GIT_REPO=https://github.com/helloxoxoxo007/tradingview-webhooks-bot.git
 
+
+ARG TBOT_TRADINGBOAT_GIT_REPO_BRANCH=support_future
+ARG TBOT_TVWB_GIT_REPO_BRANCH=support_future
+
+
 WORKDIR /root
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -96,13 +101,15 @@ RUN apt-get install --no-install-recommends --yes \
   python3-dev \
   python-is-python3 \
   gcc \
+  vim \
   tmux
 
 # Create tbot user and clone both repos
 RUN useradd -m -s /bin/bash tbot && mkdir -p /home/tbot/develop/github
-RUN git clone ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradingboat && \
-    git clone ${TBOT_TVWB_GIT_REPO} /home/tbot/develop/github/tradingview-webhooks-bot && \
+RUN git clone -b ${TBOT_TRADINGBOAT_GIT_REPO_BRANCH} ${TBOT_TRADINGBOAT_GIT_REPO} /home/tbot/develop/github/tbot-tradingboat && \
+    git clone -b ${TBOT_TVWB_GIT_REPO_BRANCH} ${TBOT_TVWB_GIT_REPO} /home/tbot/develop/github/tradingview-webhooks-bot && \
     chown -R tbot:tbot /home/tbot/develop/github
+
 
 # Patch ngrok link to use the browser's hostname instead of hardcoded 127.0.0.1
 RUN sed -i 's|const val = response.data.address;|const val = response.data.address.replace(/\\/\\/[^:/]+/, "//" + window.location.hostname);|' \
