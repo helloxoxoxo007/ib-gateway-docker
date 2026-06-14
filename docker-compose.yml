@@ -62,6 +62,7 @@ services:
     command:
       - http
       - "${NGROK_PORT}"
+      - "--pooling-enabled"
     ports:
       - "4040:4040"
     environment:
