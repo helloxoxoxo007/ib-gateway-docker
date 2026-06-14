@@ -37,6 +37,9 @@ fi
 
 echo "=== Launching IBC (with no login dialog wait) ==="
 
+# Start socat bridge in background — polls until IB Gateway binds :4001, then forwards :4002→:4001
+/root/scripts/fork_ports_delayed.sh &
+
 /root/ibc/scripts/ibcstart.sh "${TWS_MAJOR_VRSN}" -g \
     "--tws-path=${TWS_PATH}" \
     "--ibc-path=${IBC_PATH}" \
